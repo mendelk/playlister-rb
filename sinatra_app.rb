@@ -42,7 +42,7 @@ module MendelsPlaylistr
   class App < Sinatra::Base
 
     get '/' do
-      "Hello"
+      erb :'index'
     end
 
     get '/artists' do
