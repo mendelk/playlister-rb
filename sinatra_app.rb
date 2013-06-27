@@ -4,6 +4,7 @@ require 'data_mapper'
 require 'json'
 require 'open-uri'
 require 'cgi'
+require 'dm-sqlite-adapter'
 
 DataMapper.setup(:default, "sqlite3://#{Dir.pwd}/dev.db")
 
