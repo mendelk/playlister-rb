@@ -1,0 +1,10 @@
+<h1><%= @song.name %></h1>
+
+<ul>
+  <li>Artist: <a href="/artists/<%= @song.artist.slug %>"><%= @song.artist.name %></a></li>
+  <li>Genre: <a href="/genres/<%= @song.genre.slug %>"><%= @song.genre.name %></a></li>
+</ul>
+
+<% if @youtube_id %>
+<iframe width="560" height="315" src="//www.youtube-nocookie.com/embed/<%= @youtube_id %>" frameborder="0" allowfullscreen></iframe>
+<% end %>

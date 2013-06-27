@@ -1,9 +1,6 @@
 class Scraper
-
   require 'find'
-
   class << self
-
     def get_files(directory)
       files = []
       Find.find(directory) do |file|
@@ -11,7 +8,6 @@ class Scraper
       end
       files
     end
-
     def generate_object(file)
       regex = file.match(/(?<artist_song>.*)\[(?<genre>.+)\]/)
       artist_name, song_name = regex[:artist_song].split(' - ').collect(&:strip)
@@ -22,7 +18,5 @@ class Scraper
       artist.add_song(song)
       song.genre = genre
     end
-
   end
-
 end

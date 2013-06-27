@@ -23,7 +23,7 @@ class Jukebox
 
   def route(command)
 
-    return send command if command == 'exit'
+    return exit if command == 'exit'
 
     case @current_screen
     when 'welcome'
@@ -50,9 +50,7 @@ class Jukebox
 
 end
 
-directory = 'data'
-
-Scraper.get_files(directory).each{|mp3_file|Scraper.generate_object(mp3_file)}
+Scraper.get_files('data').each{|mp3_file|Scraper.generate_object(mp3_file)}
 
 Jukebox.new.start
 

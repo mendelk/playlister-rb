@@ -1,0 +1,12 @@
+<h2>All Genres</h2>
+
+<ul>
+
+  <% @genres.each do |genre| %>
+
+  <li><a href="/genres/<%= genre.slug %>"><%= genre.name %> (<%= genre.songs.count %>)</a></li>
+
+  <% end %>
+
+
+</ul>
