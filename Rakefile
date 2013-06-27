@@ -1,4 +1,5 @@
 require_relative 'sinatra_app'
+include Helpers
 
 task :generate do
   require 'find'
@@ -18,9 +19,6 @@ task :generate do
         artist = Artist.first_or_create({name: artist_name},{slug: generate_slug(artist_name)})
         genre = Genre.first_or_create({name:genre_name}, {slug: generate_slug(genre_name)})
         Song.first_or_create({name:song_name},{artist: artist, genre: genre, slug: generate_slug(song_name)})
-      end
-      def generate_slug(string)
-        string.to_s.downcase.scan(/\w+/).join('-')
       end
     end
   end

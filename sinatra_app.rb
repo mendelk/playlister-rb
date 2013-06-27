@@ -5,6 +5,10 @@ require 'json'
 require 'open-uri'
 require 'cgi'
 require 'dm-sqlite-adapter'
+require 'slim'
+
+require_relative 'helpers'
+
 
 DataMapper.setup(:default, "sqlite3://#{Dir.pwd}/dev.db")
 
@@ -13,7 +17,11 @@ class Artist
   property :id, Serial
   property :name, String
   property :slug, String, :key => true
-  has n, :songs
+  # has n, :songs
+  has n, :songs, 'Song',
+    :parent_key => [ :id ],      # local to this model (Blog)
+    :child_key  => [ :artist_id ]  # in the remote model (Post)
+
 end
 
 class Song
@@ -21,8 +29,15 @@ class Song
   property :id, Serial
   property :name, String
   property :slug, String, :key => true
-  belongs_to :artist
-  belongs_to :genre
+  # belongs_to :artist
+  belongs_to :artist, 'Artist',
+    :parent_key => [ :id ],      # local to this model (Blog)
+    :child_key  => [ :artist_id ]  # in the remote model (Post)
+  # belongs_to :genre
+  belongs_to :genre, 'Genre',
+    :parent_key => [ :id ],      # local to this model (Blog)
+    :child_key  => [ :genre_id ]  # in the remote model (Post)
+
 end
 
 class Genre
@@ -30,7 +45,9 @@ class Genre
   property :id, Serial
   property :name, String
   property :slug, String, :key => true
-  has n, :songs
+  has n, :songs, 'Song',
+    :parent_key => [ :id ],      # local to this model (Blog)
+    :child_key  => [ :genre_id ]  # in the remote model (Post)
 end
 
 
@@ -41,13 +58,16 @@ module MendelsPlaylistr
 
   class App < Sinatra::Base
 
+    helpers Helpers
+
+
     get '/' do
-      erb :'index'
+      slim :'index'
     end
 
     get '/artists' do
       @artists = Artist.all
-      erb :'artists/index'
+      slim :'artists/index'
     end
 
     get '/artists/new' do
@@ -56,7 +76,7 @@ module MendelsPlaylistr
 
     get '/artists/:slug' do |slug|
       @artist = Artist.first(slug:slug)
-      erb :'artists/show'
+      slim :'artists/show'
     end
 
     get '/artist/:slug/edit' do |id|
@@ -102,7 +122,7 @@ module MendelsPlaylistr
 
     get '/songs/:slug' do |slug|
       @song = Song.first(slug:slug)
-      @youtube_id = JSON.parse(open("https://gdata.youtube.com/feeds/api/videos?q=#{CGI.escape(@song.name)}+#{CGI.escape(@song.artist.name) if @song.artist}&&max-results=1&alt=json").read)["feed"]["entry"].first["id"]["$t"].split("/").last
+      @youtube_id = youtube_video_id @song
       erb :'songs/show'
     end
 
